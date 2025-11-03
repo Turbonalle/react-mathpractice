@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  base: '/math-practice',
+  base: process.env.NODE_ENV === "production" ? "/math-practice" : "/",
   plugins: [
     react(),
     tailwindcss(),
