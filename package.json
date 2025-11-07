@@ -1,5 +1,6 @@
 {
-  "name": "react-mathpage",
+  "homepage": "https://turbonalle.github.io/react-mathpractice/",
+  "name": "react-mathpractice",
   "private": true,
   "version": "0.0.0",
   "type": "module",
