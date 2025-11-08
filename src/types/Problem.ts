@@ -1,6 +1,5 @@
 export type Problem = {
-	a: number,
-	b: number,
+	question: string,
 	answer: number,
 	options: number[]
 };

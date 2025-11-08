@@ -5,45 +5,46 @@ import type { Problem } from "../types/Problem";
 import ProgressBar from "../components/ProgressBar";
 
 export default function GamePage() {
+	const TOTAL_PROBLEMS = 10;
+	const MAX_SCORE = 100;
+	const TICK_SPEED = 100;
+	const NEXT_PROBLEM_DELAY = 800;
+
 	const { operation, mode } = useParams();
 	const navigate = useNavigate();
 
 	const [problem, setProblem] = useState<Problem | null>(null);
 	const [feedback, setFeedback] = useState("");
 	const [progress, setProgress] = useState(0);
-	const [score, setScore] = useState(100);
+	const [score, setScore] = useState(MAX_SCORE);
+	const [totalScore, setTotalScore] = useState(0);
 
 	const scoreTimer = useRef<number | null>(null);
-	const totalProblems = 10;
 
 	useEffect(() => {
 		if (operation && mode) generateProblem();
-
 		// Cleanup timer when leaving
 		return (() => {
 			if (scoreTimer.current) clearInterval(scoreTimer.current);
 		});
 	}, [operation, mode]);
 
-	useEffect(() => {
-		if (problem) startScoreTimer();
-	}, [problem]);
-
 	function startScoreTimer() {
 		if (scoreTimer.current) clearInterval(scoreTimer.current);
-		setScore(100);
+		setScore(MAX_SCORE);
 
 		scoreTimer.current = setInterval(() => {
 			setScore((prev) => {
 				if (prev <= 0) {
 					clearInterval(scoreTimer.current!);
-					setFeedback("⏳ Time’s up!");
-					setTimeout(() => generateProblem(), 1000);
+					scoreTimer.current = null;
+					setFeedback("⏳ Time's up!");
+					nextProblem();
 					return 0;
 				}
 				return prev - 1;
 			});
-		}, 100);
+		}, TICK_SPEED);
 	}
 
 	function playSound(type: "correct" | "wrong") {
@@ -59,25 +60,48 @@ export default function GamePage() {
 	function generateProblem() {
 		if (!operation || !mode) return;
 		const op = operations[operation];
-		if (!op) return console.error(`Unknown operation: ${operation}`);
-
 		const newProblem = op.generate(mode);
 		setProblem(newProblem);
 		setFeedback("");
+		startScoreTimer();
+		// setTimeout(() => startScoreTimer(), 0);
 	}
 
 	function handleAnswer(selected: number) {
 		if (!problem) return;
+		if (scoreTimer.current) clearInterval(scoreTimer.current);
 
 		if (selected === problem.answer) {
+			setTotalScore((previousScore) => previousScore + score);
 			playSound("correct");
 			setFeedback("✅ Correct!");
 		} else {
 			playSound("wrong");
 			setFeedback("❌ Try again!");
 		}
-		setProgress((p) => p + 1);
-		setTimeout(() => generateProblem(), 800);
+		nextProblem();
+	}
+
+	function nextProblem() {
+		setProgress((progress) => progress + 1);
+		if (progress >= TOTAL_PROBLEMS - 1) {
+			setTimeout(() => finishGame(), NEXT_PROBLEM_DELAY);
+		} else {
+			setTimeout(() => generateProblem(), NEXT_PROBLEM_DELAY);
+		}
+	}
+
+	function finishGame() {
+		if (!operation || !mode) return;
+
+		const scores = JSON.parse(localStorage.getItem("mathScores") || "{}");
+
+		scores[operation] = scores[operation] || {};
+		scores[operation][mode] = totalScore;
+
+		localStorage.setItem("mathScores", JSON.stringify(scores));
+
+		navigate(`/mode/${operation}`);
 	}
 
 	if (!operation || !mode) {
@@ -99,8 +123,6 @@ export default function GamePage() {
 		);
 	}
 
-	const symbol = operations[operation]?.symbol ?? "?";
-
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-white p-8 space-y-8">
 			<h1 className="text-3xl text-emerald-400 font-bold capitalize">
@@ -111,6 +133,9 @@ export default function GamePage() {
 			<div className="w-80">
 				<p className="text-sm mb-1 text-gray-400">
 					Score: <span className="text-emerald-400">{score}</span>
+				</p>
+				<p className="text-sm mb-1 text-gray-400">
+					Total Score: <span className="text-emerald-400">{totalScore}</span>
 				</p>
 				<div className="w-full h-4 bg-gray-700 rounded-full">
 					<div
@@ -123,10 +148,10 @@ export default function GamePage() {
 			{/* Problem display */}
 			<div className="bg-gray-800 p-8 rounded-xl shadow-lg text-center w-80">
 				<p className="text-5xl font-bold mb-8">
-					{problem.a} {symbol} {problem.b}
+					{problem.question}
 				</p>
 
-				<div className="grid grid-cols-2 gap-4">
+				<div className="grid grid-cols-2 gap-2">
 					{problem.options.map((option, index) => (
 						<button
 							key={index}
@@ -143,8 +168,10 @@ export default function GamePage() {
 
 			{/* Progress bar (how many problems done) */}
 			<div className="w-80">
-				<p className="text-sm mb-1 text-gray-400">Progress</p>
-				<ProgressBar current={progress} total={totalProblems} />
+				<p className="text-sm mb-1 text-gray-400">Progress:
+					<span className="text-emerald-400"> {progress} / {TOTAL_PROBLEMS}</span>
+				</p>
+				<ProgressBar current={progress} total={TOTAL_PROBLEMS} />
 			</div>
 
 			<button

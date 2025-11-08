@@ -11,7 +11,7 @@ export interface OperationConfig {
 export const operations: Record<string, OperationConfig> = {
 	addition: {
 		symbol: "+",
-		difficulties: ["0 to 5", "0 to 10", "Pairs of ten", "10 to 20", "Past ten", "20 to 100"],
+		difficulties: ["0 to 5", "0 to 10", "Pairs of ten", "Add to ten", "10 to 20", "Past ten: low", "Past ten: high", "20 to 100"],
 		generate: additionGenerator
 	},
 	subtraction: {

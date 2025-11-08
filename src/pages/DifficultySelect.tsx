@@ -8,6 +8,9 @@ export default function DifficultySelect() {
 
 	const operationConfig = operation ? operations[operation] : null;
 
+	const storedScores = JSON.parse(localStorage.getItem("mathScores") || "{}");
+	const operationScores = operation ? storedScores[operation] || {} : {};
+
 	if (!operationConfig) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 text-white">
@@ -32,8 +35,8 @@ export default function DifficultySelect() {
 					<DifficultyCard
 						key={mode}
 						name={mode}
-						score={0}
-						finished={false}
+						score={operationScores[mode] || 0}
+						finished={!!operationScores[mode]}
 						onStart={() => navigate(`/mode/${operation}/${mode}`)}
 					/>
 				))}
