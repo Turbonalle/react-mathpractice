@@ -1,9 +1,9 @@
 import type { Problem } from "../../types/Problem";
 
 export function additionGenerator(mode: string): Problem {
-	let a: number | string = 0;
-	let b: number | string = 0;
-	let sum: number | string = 0;
+	let a: number = 0;
+	let b: number = 0;
+	let sum: number = 0;
 	let answer: number = 0;
 	let options: number[] = [];
 	let question: string = "";

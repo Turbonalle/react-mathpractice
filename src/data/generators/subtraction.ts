@@ -1,8 +1,11 @@
 import type { Problem } from "../../types/Problem";
 
 export function subtractionGenerator(difficulty: string): Problem {
-	let a= 0, b = 0, answer = 0;
+	let a: number = 0;
+	let b: number = 0;
+	let answer: number = 0;
 	let options: number[] = [];
+	let question: string = "";
 	const optionAmount = 4;
 
 	switch (difficulty) {
@@ -24,7 +27,7 @@ export function subtractionGenerator(difficulty: string): Problem {
 
 	options.push(answer);
 	options = options.sort(() => Math.random() - 0.5);
-	return { a, b, answer, options };
+	return { question, options, answer };
 }
 
 
