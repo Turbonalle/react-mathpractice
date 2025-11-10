@@ -3,10 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { operations } from "../data/config";
 import type { Problem } from "../types/Problem";
 import ProgressBar from "../components/ProgressBar";
+import OptionButton from "../components/OptionButton";
 
 export default function GamePage() {
 	const TOTAL_PROBLEMS = 10;
 	const MAX_SCORE = 100;
+	const PENALTY = 20;
 	const TICK_SPEED = 100;
 	const NEXT_PROBLEM_DELAY = 800;
 
@@ -14,16 +16,19 @@ export default function GamePage() {
 	const navigate = useNavigate();
 
 	const [problem, setProblem] = useState<Problem | null>(null);
-	const [feedback, setFeedback] = useState("");
 	const [progress, setProgress] = useState(0);
 	const [score, setScore] = useState(MAX_SCORE);
 	const [totalScore, setTotalScore] = useState(0);
+	const [isLocked, setIsLocked] = useState(false);
+	const [statuses, setStatuses] = useState<(null | "wrong" | "correct")[]>([]);
 
 	const scoreTimer = useRef<number | null>(null);
 
+
+// ---- Functions --------------------------------------------------------------
+
 	useEffect(() => {
 		if (operation && mode) generateProblem();
-		// Cleanup timer when leaving
 		return (() => {
 			if (scoreTimer.current) clearInterval(scoreTimer.current);
 		});
@@ -38,7 +43,7 @@ export default function GamePage() {
 				if (prev <= 0) {
 					clearInterval(scoreTimer.current!);
 					scoreTimer.current = null;
-					setFeedback("⏳ Time's up!");
+					// TODO: notify that time is up
 					nextProblem();
 					return 0;
 				}
@@ -62,46 +67,70 @@ export default function GamePage() {
 		const op = operations[operation];
 		const newProblem = op.generate(mode);
 		setProblem(newProblem);
-		setFeedback("");
+		setStatuses(Array(newProblem.options.length).fill(null));
+		setIsLocked(false);
 		startScoreTimer();
 	}
 
-	function handleAnswer(selected: number) {
-		if (!problem) return;
-		if (scoreTimer.current) clearInterval(scoreTimer.current);
+	function handleAnswer(selected: number, index: number) {
+		if (!problem || isLocked) return;
 
 		if (selected === problem.answer) {
-			setTotalScore((previousScore) => previousScore + score);
+			// Correct: stop timer, mark as correct, lock input
+			if (scoreTimer.current) {
+				clearInterval(scoreTimer.current);
+				scoreTimer.current = null;
+			}
 			playSound("correct");
-			setFeedback("✅ Correct!");
+			setStatuses((previous) => {
+				const updated = [...previous];
+				updated[index] = "correct";
+				return updated;
+			});
+			setIsLocked(true);
+			setTotalScore((previousScore) => previousScore + score);
+			setTimeout(() => {
+				nextProblem();
+			}, NEXT_PROBLEM_DELAY);
 		} else {
+			// Wrong: mark as wrong, subtract 10 points
 			playSound("wrong");
-			setFeedback("❌ Try again!");
+			setStatuses((previous) => {
+				const updated = [...previous];
+				updated[index] = "wrong";
+				return updated;
+			})
+			setScore((previous) => Math.max(previous - PENALTY, 0));
 		}
-		nextProblem();
 	}
 
 	function nextProblem() {
 		setProgress((progress) => progress + 1);
 		if (progress >= TOTAL_PROBLEMS - 1) {
-			setTimeout(() => finishGame(), NEXT_PROBLEM_DELAY);
+			console.log("Calling finishGame from nextProblem.");
+			finishGame(totalScore + score);
 		} else {
-			setTimeout(() => generateProblem(), NEXT_PROBLEM_DELAY);
+			generateProblem();
 		}
 	}
 
-	function finishGame() {
+	function finishGame(finalScore: number) {
 		if (!operation || !mode) return;
 
 		const scores = JSON.parse(localStorage.getItem("mathScores") || "{}");
 
 		scores[operation] = scores[operation] || {};
-		scores[operation][mode] = totalScore;
 
-		localStorage.setItem("mathScores", JSON.stringify(scores));
+		if (finalScore > scores[operation][mode] || scores[operation][mode] === undefined) {
+			scores[operation][mode] = finalScore;
+			localStorage.setItem("mathScores", JSON.stringify(scores));
+		}
 
 		navigate(`/mode/${operation}`);
 	}
+
+
+// ---- Return -----------------------------------------------------------------
 
 	if (!operation || !mode) {
 		return (
@@ -152,17 +181,15 @@ export default function GamePage() {
 
 				<div className="grid grid-cols-2 gap-2">
 					{problem.options.map((option, index) => (
-						<button
+						<OptionButton
 							key={index}
-							onClick={() => handleAnswer(option)}
-							className="bg-gray-200 text-black text-2xl font-semibold py-3 rounded-xl hover:bg-emerald-400 transition"
-						>
-							{option}
-						</button>
+							value={option}
+							onClick={() => handleAnswer(option, index)}
+							locked={isLocked || statuses[index] === "wrong"}
+							status={statuses[index] as any}
+						/>
 					))}
 				</div>
-
-				<p className="text-xl mt-6">{feedback}</p>
 			</div>
 
 			{/* Progress bar (how many problems done) */}
