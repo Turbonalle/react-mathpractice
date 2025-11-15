@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { operations } from "../data/config";
-import DifficultyCard from "../components/DifficultyCard";
+import ModeCard from "../components/ModeCard";
 
-export default function DifficultySelect() {
+export default function ModeSelect() {
 	const { operation } = useParams();
 	const navigate = useNavigate();
 
@@ -28,14 +28,14 @@ export default function DifficultySelect() {
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 p-8 text-center text-gray-800">
 			<h1 className="text-3xl text-emerald-400 font-bold mb-8 capitalize">
-				{operation} - Select Difficulty
+				{operation} - Select Mode
 			</h1>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md-grid-cols-3 gap-6">
 				{operationConfig.difficulties.map((mode: string) => (
-					<DifficultyCard
+					<ModeCard
 						key={mode}
 						name={mode}
-						score={operationScores[mode] || 0}
+						// score={operationScores[mode] || 0}
 						finished={!!operationScores[mode]}
 						onStart={() => navigate(`/mode/${operation}/${mode}`)}
 					/>

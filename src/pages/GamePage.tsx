@@ -107,7 +107,6 @@ export default function GamePage() {
 	function nextProblem() {
 		setProgress((progress) => progress + 1);
 		if (progress >= TOTAL_PROBLEMS - 1) {
-			console.log("Calling finishGame from nextProblem.");
 			finishGame(totalScore + score);
 		} else {
 			generateProblem();
@@ -120,17 +119,34 @@ export default function GamePage() {
 		const scores = JSON.parse(localStorage.getItem("mathScores") || "{}");
 
 		scores[operation] = scores[operation] || {};
+		scores[operation][mode] = scores[operation][mode] || [];
 
-		if (finalScore > scores[operation][mode] || scores[operation][mode] === undefined) {
-			scores[operation][mode] = finalScore;
+		const modeScores = scores[operation][mode];
+
+		const lowestTopScore = modeScores.length < 10
+			? -Infinity
+			: modeScores[modeScores.length - 1].score;
+
+		if (finalScore > lowestTopScore) {
+			const name = prompt("You made it to the top 10! Enter your name:") || "Anonymous";
+
+			console.log("name: ", name);
+
+			modeScores.push({ name, score: finalScore });
+			modeScores.sort((a: {name: string, score: number}, b: {name: string, score: number}) => b.score - a.score);
+			modeScores.splice(10);
+
+			console.log("New record! modeScores: ", modeScores);
+
 			localStorage.setItem("mathScores", JSON.stringify(scores));
 		}
-
+		
+		console.log("modeScores: ", modeScores);
 		navigate(`/mode/${operation}`);
 	}
 
 
-// ---- Return -----------------------------------------------------------------
+	// ---- Return -------------------------------------------------------------
 
 	if (!operation || !mode) {
 		return (
