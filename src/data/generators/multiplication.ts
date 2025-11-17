@@ -19,7 +19,7 @@ export class MultiplicationGenerator {
 	generate(table: number): Problem {
 		const factor = this.getNextFactor(table);
 		const answer = table * factor;
-		const question = `${table} * ${factor} = ?`;
+		const question = `${table} × ${factor} = ?`;
 		const options = generateOptions(table, answer, 4);
 		options.push(answer);
 		options.sort(() => Math.random() - 0.5);

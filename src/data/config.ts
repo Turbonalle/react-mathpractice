@@ -1,5 +1,5 @@
 import { additionGenerator } from "./generators/addition";
-import { subtractionGenerator } from "./generators/subtraction";
+import { SubtractionGenerator } from "./generators/subtraction";
 import { MultiplicationGenerator } from "./generators/multiplication";
 // import { divisionGenerator } from "./generators/division";
 import type { Problem } from "../types/Problem";
@@ -10,6 +10,7 @@ export interface OperationConfig {
 	generate: (difficulty: string) => Problem;
 }
 
+const subtractionGenerator = new SubtractionGenerator();
 const multiplicationGenerator = new MultiplicationGenerator();
 
 export const operations: Record<string, OperationConfig> = {
@@ -21,7 +22,7 @@ export const operations: Record<string, OperationConfig> = {
 	subtraction: {
 		symbol: "-",
 		difficulties: ["1", "2", "3", "4", "5", "6", "7", "8"],
-		generate: subtractionGenerator
+		generate: subtractionGenerator.generate.bind(subtractionGenerator)
 	},
 	multiplication: {
 		symbol: "×",

@@ -1,33 +1,50 @@
 import type { Problem } from "../../types/Problem";
 
-export function subtractionGenerator(difficulty: string): Problem {
-	let a: number = 0;
-	let b: number = 0;
-	let answer: number = 0;
-	let options: number[] = [];
-	let question: string = "";
-	const optionAmount = 4;
+const optionAmount = 4;
 
-	switch (difficulty) {
-		case "0-5": {
-			a = getRandomInt(1, 5);
-			b = getRandomInt(0, a);
-			answer = a - b;
-			options = generateOptions(answer, 0, 5, optionAmount);
-			break;
-		}
-		case "0-10": {
-			a = getRandomInt(5, 10);
-			b = getRandomInt(1, a);
-			answer = a - b;
-			options = generateOptions(answer, 5, 10, optionAmount);
-			break;
+export class SubtractionGenerator {
+	private pool: [number, number][] = [];
+
+	private fillPool(min: number, max: number) {
+		this.pool = [];
+		for (let i = min; i <= max; i++) {
+			for (let j = min; j <= i; j++) {
+				this.pool.push([i, j]);
+			}
 		}
 	}
 
-	options.push(answer);
-	options = options.sort(() => Math.random() - 0.5);
-	return { question, options, answer };
+	private getRandomPair(min: number, max: number): [number, number] {
+		if (!this.pool || this.pool.length == 0) {
+			this.fillPool(min, max);
+		}
+		const index = Math.floor(Math.random() * this.pool.length);
+		const pair = this.pool.splice(index, 1)[0];
+		return pair;
+	}
+
+	private generateUnknownDifference(min: number, max: number): Problem {
+		this.fillPool(min, max);
+		const pair = this.getRandomPair(min, max);
+		const answer = pair[0] - pair[1];
+		const question = pair[0] + " - " + pair[1] + " = ?";
+		let options = generateOptions(answer, min, max, optionAmount);
+		options.push(answer);
+		options = options.sort(() => Math.random() - 0.5);
+		return { question, options, answer };
+	}
+
+	generate(mode: string): Problem {
+		switch (mode) {
+			case "1": {
+				return this.generateUnknownDifference(0, 5);
+			}
+			case "2": {
+				return this.generateUnknownDifference(0, 10);
+			}
+			default: throw new Error(`Unknown subtraction mode: $(mode)`);
+		}
+	}
 }
 
 

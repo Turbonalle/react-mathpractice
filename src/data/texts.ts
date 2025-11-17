@@ -39,9 +39,9 @@ export const texts: Record<Language, any> = {
 			subtraction: {
 				name: "Subtraction",
 				modes: {
-					"1": "",
-					"2": "",
-					"3": "",
+					"1": "0 - 5",
+					"2": "0 - 10",
+					"3": "Ten: Pairs",
 					"4": "",
 					"5": "",
 					"6": "",
@@ -117,8 +117,8 @@ export const texts: Record<Language, any> = {
 			subtraction: {
 				name: "Subtraktion",
 				modes: {
-					"1": "",
-					"2": "",
+					"1": "0 - 5",
+					"2": "0 - 10",
 					"3": "",
 					"4": "",
 					"5": "",
@@ -195,8 +195,8 @@ export const texts: Record<Language, any> = {
 			subtraction: {
 				name: "Vähennyslasku",
 				modes: {
-					"1": "",
-					"2": "",
+					"1": "0 - 5",
+					"2": "0 - 10",
 					"3": "",
 					"4": "",
 					"5": "",
@@ -273,8 +273,8 @@ export const texts: Record<Language, any> = {
 			subtraction: {
 				name: "Pagbabawas",
 				modes: {
-					"1": "",
-					"2": "",
+					"1": "0 - 5",
+					"2": "0 - 10",
 					"3": "",
 					"4": "",
 					"5": "",
@@ -351,8 +351,8 @@ export const texts: Record<Language, any> = {
 			subtraction: {
 				name: "Frádráttur",
 				modes: {
-					"1": "",
-					"2": "",
+					"1": "0 - 5",
+					"2": "0 - 10",
 					"3": "",
 					"4": "",
 					"5": "",
