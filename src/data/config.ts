@@ -1,6 +1,7 @@
 import { additionGenerator } from "./generators/addition";
 import { subtractionGenerator } from "./generators/subtraction";
 import { MultiplicationGenerator } from "./generators/multiplication";
+// import { divisionGenerator } from "./generators/division";
 import type { Problem } from "../types/Problem";
 
 export interface OperationConfig {
@@ -39,5 +40,10 @@ export const operations: Record<string, OperationConfig> = {
 				default: throw new Error(`Unknown multiplication mode: ${mode}`);
 			}
 		}
-	}
+	},
+	// division: {
+	// 	symbol: "/",
+	// 	difficulties: ["1", "2", "3", "4", "5", "6", "7", "8"],
+	// 	generate: divisionGenerator
+	// },
 };

@@ -10,7 +10,7 @@ export function additionGenerator(mode: string): Problem {
 	const optionAmount = 4;
 
 	switch (mode) {
-		case "0 to 5": {
+		case "1": {
 			sum = getRandomInt(0, 5);
 			a = Math.floor(Math.random() * (sum + 1));
 			b = sum - a;
@@ -19,7 +19,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "0 to 10": {
+		case "2": {
 			sum = getRandomInt(5, 10);
 			a = Math.floor(Math.random() * (sum + 1));
 			b = sum - a;
@@ -28,7 +28,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "Pairs of ten": {
+		case "3": {
 			sum = 10;
 			a = Math.floor(Math.random() * (sum + 1));
 			b = sum - a;
@@ -37,7 +37,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + ? = " + sum;
 			break;
 		}
-		case "Add to ten": {
+		case "4": {
 			sum = getRandomInt(10, 20);
 			a = 10;
 			b = sum - a;
@@ -46,7 +46,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "10 to 20": {
+		case "5": {
 			sum = getRandomInt(10, 20);
 			a = getRandomInt(10, sum);
 			b = sum - a;
@@ -55,7 +55,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "Past ten: low": {
+		case "6": {
 			sum = getRandomInt(11, 15);
 			a = getRandomInt(5, 9);
 			b = sum - a;
@@ -64,7 +64,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "Past ten: high": {
+		case "7": {
 			sum = getRandomInt(15, 20);
 			a = getRandomInt(5, 9);
 			b = sum - a;
@@ -73,7 +73,7 @@ export function additionGenerator(mode: string): Problem {
 			question = a + " + " + b + " = ?";
 			break;
 		}
-		case "20 to 100": {
+		case "8": {
 			sum = getRandomInt(20, 100);
 			a = getRandomInt(20, sum);
 			b = sum - a;
