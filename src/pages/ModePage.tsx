@@ -68,7 +68,7 @@ export default function ModePage() {
 							<Leaderboard operation={operation!} mode={hoveredMode} />
 						</div>
 					) : (
-						<div className="bg-gray-900 p-6 rounded-2xl h-full w-[400px] flex items-center justify-center">
+						<div className="hidden sm:flex bg-gray-900 p-6 rounded-2xl h-full w-[400px] flex items-center justify-center">
 							<div className="text-gray-600 text-base">
 								{t("leaderboard.hover")}
 							</div>
