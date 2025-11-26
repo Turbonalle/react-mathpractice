@@ -35,13 +35,13 @@ export default function ModePage() {
 
 	return (
 		<div className="flex flex-col items-center h-[calc(100vh-52px)] bg-gray-950 text-center text-gray-800">
-			<h1 className="text-emerald-500 font-semibold text-3xl mb-2">{translatedOperation} - {t("modepage.title")}</h1>
+			<h1 className="text-emerald-500 font-semibold text-3xl my-4">{translatedOperation} - {t("modepage.title")}</h1>
 			
 			{/* MAIN CONTENT AREA */}
 			<div className="grow flex justify-center items-start gap-4 w-full max-w-5xl h-full bg-gray-950">
 					
 					{/* LEFT COLUMN */}
-					<div className="flex flex-col space-y-2 overflow-y-auto pr-2 h-full">
+					<div className="flex flex-col space-y-2 overflow-y-auto px-2 pt-1 h-full">
 						{operationConfig.difficulties.map((modeId: string) => {
 							const modeName = t(`operations.${operation}.modes.${modeId}`);
 							const topRecord = operationScores[modeId]?.[0];
